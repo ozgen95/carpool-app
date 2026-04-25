@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String         @id @default(uuid())
+  clerkId      String         @unique
+  email        String         @unique
+  name         String?
+  school       String?
+  createdAt    DateTime       @default(now())
+  rides        Ride[]
+  rideRequests RideRequest[]
+  messages     Message[]
+}
+
+model Ride {
+  id              String         @id @default(uuid())
+  driverId        String
+  driver          User           @relation(fields: [driverId], references: [id])
+  originName      String
+  originLat       Float
+  originLng       Float
+  destinationName String
+  destinationLat  Float
+  destinationLng  Float
+  departureTime   DateTime
+  seatsTotal      Int
+  seatsAvailable  Int
+  pricePerSeat    Int
+  notes           String?
+  status          String         @default("active")
+  createdAt       DateTime       @default(now())
+  requests        RideRequest[]
+}
+
+model RideRequest {
+  id             String    @id @default(uuid())
+  rideId         String
+  ride           Ride      @relation(fields: [rideId], references: [id])
+  riderId        String
+  rider          User      @relation(fields: [riderId], references: [id])
+  seatsRequested Int       @default(1)
+  status         String    @default("pending")
+  createdAt      DateTime  @default(now())
+  messages       Message[]
+}
+
+model Message {
+  id            String      @id @default(uuid())
+  rideRequestId String
+  rideRequest   RideRequest @relation(fields: [rideRequestId], references: [id])
+  senderId      String
+  sender        User        @relation(fields: [senderId], references: [id])
+  body          String
+  createdAt     DateTime    @default(now())
+}
+
+model TripSearch {
+  id              String   @id @default(uuid())
+  userId          String?
+  originName      String
+  destinationName String
+  departureDate   DateTime
+  resultsCount    Int
+  createdAt       DateTime @default(now())
+}
+
+model SavedBaseline {
+  id                    String   @id @default(uuid())
+  originName            String
+  destinationName       String
+  rideshareEstimateCents Int
+  transitEstimateCents  Int?
+  lastUpdated           DateTime @default(now())
+}
