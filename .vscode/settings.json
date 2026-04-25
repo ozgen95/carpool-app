@@ -1,0 +1,5 @@
+{
+  "css.customData": [".vscode/tailwind-at-rules.json"],
+  "scss.customData": [".vscode/tailwind-at-rules.json"],
+  "less.customData": [".vscode/tailwind-at-rules.json"]
+}
