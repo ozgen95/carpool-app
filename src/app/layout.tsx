@@ -45,6 +45,12 @@ export default function RootLayout({
                 <SignUpButton mode="modal" />
               </Show>
               <Show when="signed-in">
+                <Link
+                  href="/rides/mine"
+                  className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  My Rides
+                </Link>
                 <UserButton />
               </Show>
             </div>
