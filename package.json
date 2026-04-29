@@ -11,17 +11,24 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.2.6",
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@react-google-maps/api": "^2.20.8",
+    "@vis.gl/react-google-maps": "^1.8.3",
     "next": "16.2.4",
     "pg": "^8.20.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "svix": "^1.92.2"
+    "react-hook-form": "^7.74.0",
+    "svix": "^1.92.2",
+    "use-places-autocomplete": "^4.0.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/google.maps": "^3.64.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
