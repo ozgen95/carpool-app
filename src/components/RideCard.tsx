@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+interface RideRequest {
+  id: string;
+  status: string;
+  rider: {
+    name: string | null;
+    email: string;
+  };
+}
 
 interface Ride {
   id: string;
@@ -13,6 +23,7 @@ interface Ride {
   pricePerSeat: number;
   notes: string | null;
   status: string;
+  requests?: RideRequest[];
 }
 
 interface Props {
@@ -58,10 +69,10 @@ const formatTime = (date: Date) => {
 export default function RideCard({ ride }: Props) {
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   const handleCancel = async () => {
     if (!confirm("Are you sure you want to cancel this ride?")) return;
-
     setCancelling(true);
     try {
       const res = await fetch(`/api/rides/${ride.id}`, {
@@ -69,17 +80,40 @@ export default function RideCard({ ride }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "cancelled" }),
       });
-
       if (!res.ok) throw new Error("Failed to cancel");
       router.refresh();
-    } catch (err) {
+    } catch {
       alert("Something went wrong. Please try again.");
     } finally {
       setCancelling(false);
     }
   };
 
+  const handleRequestAction = async (
+    requestId: string,
+    action: "accepted" | "declined",
+  ) => {
+    setProcessingId(requestId);
+    try {
+      const res = await fetch(`/api/requests/${requestId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: action }),
+      });
+      if (!res.ok) throw new Error("Failed to update request");
+      router.refresh();
+    } catch {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
   const departureDate = new Date(ride.departureTime);
+  const pendingRequests =
+    ride.requests?.filter((r) => r.status === "pending") || [];
+  const acceptedRequests =
+    ride.requests?.filter((r) => r.status === "accepted") || [];
 
   return (
     <div className="border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 flex flex-col gap-3">
@@ -94,7 +128,7 @@ export default function RideCard({ ride }: Props) {
         </span>
       </div>
 
-      {/* Details row */}
+      {/* Details */}
       <div className="flex flex-wrap gap-4 text-sm text-zinc-500">
         <span>
           🗓 {formatDate(departureDate)} at {formatTime(departureDate)}
@@ -105,12 +139,74 @@ export default function RideCard({ ride }: Props) {
         <span>💰 {displayPrice(ride.pricePerSeat)}/seat</span>
       </div>
 
-      {/* Notes */}
       {ride.notes && (
         <p className="text-sm text-zinc-400 italic">"{ride.notes}"</p>
       )}
 
-      {/* Footer: status + cancel button */}
+      {/* Pending requests */}
+      {pendingRequests.length > 0 && (
+        <div className="border-t border-zinc-100 dark:border-zinc-800 pt-3 flex flex-col gap-2">
+          <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+            Pending Requests ({pendingRequests.length})
+          </p>
+          {pendingRequests.map((req) => (
+            <div
+              key={req.id}
+              className="flex items-center justify-between gap-2"
+            >
+              <span className="text-sm text-zinc-600 dark:text-zinc-300 truncate">
+                {req.rider.name || req.rider.email}
+              </span>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => handleRequestAction(req.id, "accepted")}
+                  disabled={processingId === req.id}
+                  className="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 hover:bg-green-200 font-medium disabled:opacity-50"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleRequestAction(req.id, "declined")}
+                  disabled={processingId === req.id}
+                  className="text-xs px-3 py-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200 font-medium disabled:opacity-50"
+                >
+                  Decline
+                </button>
+                <Link
+                  href={`/messages/${req.id}`}
+                  className="text-xs px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 hover:bg-zinc-200 font-medium"
+                >
+                  Message
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Accepted riders */}
+      {acceptedRequests.length > 0 && (
+        <div className="border-t border-zinc-100 dark:border-zinc-800 pt-3 flex flex-col gap-2">
+          <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">
+            Accepted Riders ({acceptedRequests.length})
+          </p>
+          {acceptedRequests.map((req) => (
+            <div key={req.id} className="flex items-center justify-between">
+              <span className="text-sm text-zinc-600 dark:text-zinc-300 truncate">
+                {req.rider.name || req.rider.email}
+              </span>
+              <Link
+                href={`/messages/${req.id}`}
+                className="text-xs px-3 py-1 rounded-full bg-zinc-100 text-zinc-600 hover:bg-zinc-200 font-medium"
+              >
+                Message
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Footer */}
       <div className="flex items-center justify-between mt-1">
         <span
           className={`text-xs font-medium px-3 py-1 rounded-full capitalize ${
@@ -119,7 +215,6 @@ export default function RideCard({ ride }: Props) {
         >
           {ride.status}
         </span>
-
         {ride.status === "active" && (
           <button
             onClick={handleCancel}
