@@ -40,8 +40,14 @@ export default function RootLayout({
               Carpool
             </Link>
             <div className="flex items-center gap-4">
+              <Link
+                href="/rides/search"
+                className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+              >
+                Find a ride
+              </Link>
               <Show when="signed-out">
-                <SignInButton />
+                <SignInButton mode="modal" />
                 <SignUpButton mode="modal" />
               </Show>
               <Show when="signed-in">
