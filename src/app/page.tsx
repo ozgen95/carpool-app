@@ -1,7 +1,22 @@
 import Link from "next/link";
-import { Show, SignInButton } from "@clerk/nextjs";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+async function getStats() {
+  const [totalRides, totalSearches, totalRequests] = await Promise.all([
+    prisma.ride.count({
+      where: { status: { in: ["active", "completed", "full"] } },
+    }),
+    prisma.tripSearch.count(),
+    prisma.rideRequest.count({ where: { status: "accepted" } }),
+  ]);
+
+  return { totalRides, totalSearches, totalRequests };
+}
+
+export default async function Home() {
+  const { totalRides, totalSearches, totalRequests } = await getStats();
+
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 py-24 bg-zinc-50 dark:bg-black">
       <div className="w-full max-w-3xl flex flex-col items-center text-center gap-8">
@@ -47,7 +62,15 @@ export default function Home() {
           </Show>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 w-full">
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-6 mt-8 w-full">
+          <StatCard value={totalRides} label="Rides Posted" />
+          <StatCard value={totalSearches} label="Searches Made" />
+          <StatCard value={totalRequests} label="Seats Matched" />
+        </div>
+
+        {/* Feature cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4 w-full">
           <FeatureCard
             title="Save money"
             description="Travel for less than the cost of a bus ticket on most routes."
@@ -63,6 +86,15 @@ export default function Home() {
         </div>
       </div>
     </main>
+  );
+}
+
+function StatCard({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-1 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+      <span className="text-4xl font-bold text-purple-700">{value}</span>
+      <span className="text-sm text-zinc-500">{label}</span>
+    </div>
   );
 }
 
