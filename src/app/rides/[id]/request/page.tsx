@@ -11,7 +11,7 @@ interface Props {
 export default async function RequestRidePage({ params }: Props) {
   const { userId: clerkId } = await auth();
 
-  if (!clerkId) redirect("/");
+  if (!clerkId) redirect("/sign-in");
 
   const { id } = await params;
 

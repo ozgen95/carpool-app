@@ -10,6 +10,12 @@ export default function AuthButtons() {
     return (
       <div className="flex items-center gap-4">
         <Link
+          href="/rides/search"
+          className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+        >
+          Find a ride
+        </Link>
+        <Link
           href="/rides/mine"
           className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
         >
