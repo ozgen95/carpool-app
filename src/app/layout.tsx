@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
-import {
-  ClerkProvider,
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import AuthButtons from "@/components/AuthButtons";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -46,19 +42,7 @@ export default function RootLayout({
               >
                 Find a ride
               </Link>
-              <Show when="signed-out">
-                <SignInButton mode="modal" />
-                <SignUpButton mode="modal" />
-              </Show>
-              <Show when="signed-in">
-                <Link
-                  href="/rides/mine"
-                  className="text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
-                >
-                  My Rides
-                </Link>
-                <UserButton />
-              </Show>
+              <AuthButtons />
             </div>
           </header>
           {children}

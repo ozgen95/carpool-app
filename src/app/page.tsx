@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { Show } from "@clerk/nextjs";
 import { prisma } from "@/lib/prisma";
 
 async function getStats() {
@@ -31,22 +31,25 @@ export default async function Home() {
           price of rideshare or transit.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button className="h-12 px-8 rounded-full bg-purple-700 text-white font-medium hover:bg-purple-800 transition-colors">
-                Get started
-              </button>
-            </SignInButton>
+        <Show when="signed-out">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              href="/sign-in"
+              className="h-12 px-8 flex items-center justify-center rounded-full bg-purple-700 text-white font-medium hover:bg-purple-800 transition-colors"
+            >
+              Get started
+            </Link>
             <Link
               href="/rides/search"
               className="h-12 px-8 flex items-center justify-center rounded-full border border-zinc-300 dark:border-zinc-700 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
             >
               Browse rides
             </Link>
-          </Show>
+          </div>
+        </Show>
 
-          <Show when="signed-in">
+        <Show when="signed-in">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/rides/new"
               className="h-12 px-8 flex items-center justify-center rounded-full bg-purple-700 text-white font-medium hover:bg-purple-800 transition-colors"
@@ -59,8 +62,8 @@ export default async function Home() {
             >
               Find a ride
             </Link>
-          </Show>
-        </div>
+          </div>
+        </Show>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-6 mt-8 w-full">
