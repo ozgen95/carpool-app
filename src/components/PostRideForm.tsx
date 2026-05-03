@@ -14,7 +14,13 @@ const schema = z.object({
   destinationName: z.string().min(1, "Destination is required"),
   destinationLat: z.number(),
   destinationLng: z.number(),
-  departureTime: z.string().min(1, "Departure time is required"),
+  departureTime: z
+    .string()
+    .min(1, "Departure time is required")
+    .refine(
+      (val) => new Date(val) > new Date(),
+      "Departure time must be in the future",
+    ),
   seatsTotal: z.number().min(1).max(8),
   pricePerSeat: z.number().min(0),
   notes: z.string().optional(),
