@@ -4,6 +4,14 @@ A full-stack carpool matching platform built for students to share rides and spl
 
 **Live demo:** [carpool-app-one.vercel.app](https://carpool-app-one.vercel.app)
 
+## Screenshots
+
+![Home page](screenshots/homepage.png)
+![Find a ride](screenshots/findaride.png)
+![Search results](screenshots/ridesearch.png)
+![My rides](screenshots/myrides.png)
+![Messaging](screenshots/message.png)
+
 ---
 
 ## Features
@@ -188,11 +196,3 @@ src/
 - [ ] Ratings and reviews after completed rides
 - [ ] Stripe integration for in-app payments
 - [ ] Mobile app (React Native)
-
-## Screenshots
-
-![Home page](screenshots/homepage.png)
-![Find a ride](screenshots/findaride.png)
-![Search results](screenshots/ridesearch.png)
-![My rides](screenshots/myrides.png)
-![Messaging](screenshots/message.png)
