@@ -90,6 +90,14 @@ export async function searchRides(
   params: SearchParams,
 ): Promise<RideWithScore[]> {
   const GEO_DELTA = 0.5; // ~55km bounding box
+  console.log("Search params:", {
+    originLat: params.originLat,
+    originLng: params.originLng,
+    destinationLat: params.destinationLat,
+    destinationLng: params.destinationLng,
+    departureTime: params.departureTime,
+    seatsRequested: params.seatsRequested,
+  });
 
   // Step 1: Hard filter in SQL — narrow the universe fast
   const candidates = await prisma.ride.findMany({
@@ -119,6 +127,20 @@ export async function searchRides(
     },
     take: 100,
   });
+  console.log("Candidates found:", candidates.length);
+  console.log(
+    "Candidates:",
+    candidates.map((r) => ({
+      id: r.id,
+      originLat: r.originLat,
+      originLng: r.originLng,
+      destinationLat: r.destinationLat,
+      destinationLng: r.destinationLng,
+      departureTime: r.departureTime,
+      status: r.status,
+      seatsAvailable: r.seatsAvailable,
+    })),
+  );
 
   // Step 2: Score each candidate in app code
   const scored = candidates.map((ride) => ({
