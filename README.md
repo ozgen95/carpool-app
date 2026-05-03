@@ -6,7 +6,7 @@ A full-stack carpool matching platform built for students to share rides and spl
 
 ## Screenshots
 
-![Home page](screenshots/homepage.png)
+![Home page](screenshots/home.png)
 ![Find a ride](screenshots/findaride.png)
 ![Search results](screenshots/ridesearch.png)
 ![My rides](screenshots/myrides.png)
