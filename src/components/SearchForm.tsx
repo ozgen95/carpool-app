@@ -29,6 +29,11 @@ export default function SearchForm() {
       return;
     }
 
+    // Fix timezone same way as posting
+    const dt = new Date(departureTime);
+    const offset = dt.getTimezoneOffset();
+    const corrected = new Date(dt.getTime() - offset * 60 * 1000).toISOString();
+
     const params = new URLSearchParams({
       originName: origin.name,
       originLat: origin.lat.toString(),
@@ -36,7 +41,7 @@ export default function SearchForm() {
       destinationName: destination.name,
       destinationLat: destination.lat.toString(),
       destinationLng: destination.lng.toString(),
-      departureTime,
+      departureTime: corrected,
       seats: seats.toString(),
     });
 

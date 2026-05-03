@@ -40,13 +40,18 @@ export default function PostRideForm() {
     setIsSubmitting(true);
     setError(null);
 
+    // Fix timezone: datetime-local has no tz info, add it explicitly
+    const dt = new Date(data.departureTime);
+    const offset = dt.getTimezoneOffset();
+    const corrected = new Date(dt.getTime() - offset * 60 * 1000).toISOString();
+
     try {
       const res = await fetch("/api/rides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          departureTime: new Date(data.departureTime).toISOString(),
+          departureTime: corrected,
           pricePerSeat: Math.round(data.pricePerSeat * 100), // convert to cents
         }),
       });

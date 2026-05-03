@@ -105,8 +105,8 @@ export async function searchRides(
       status: "active",
       seatsAvailable: { gte: params.seatsRequested },
       departureTime: {
-        gte: new Date(params.departureTime.getTime() - 3 * 60 * 60 * 1000),
-        lte: new Date(params.departureTime.getTime() + 3 * 60 * 60 * 1000),
+        gte: new Date(params.departureTime.getTime() - 12 * 60 * 60 * 1000),
+        lte: new Date(params.departureTime.getTime() + 12 * 60 * 60 * 1000),
       },
       originLat: {
         gte: params.originLat - GEO_DELTA,
